@@ -4,85 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crown Counseling</title>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
-        #welcome { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 3rem; text-shadow: 2px 2px 10px black; z-index: 10; pointer-events: none; }
-        canvas { display: block; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Georgia', serif; }
+        .scene {
+            perspective: 1000px;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+        .exterior {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://res.cloudinary.com/brickandbatten/images/w_2560,h_1569,c_scale/f_auto,q_auto/v1741419383/wordpress_assets/307021-greekvilla_blackjack_thermory_modernwindows_dutchdoor_awning_avantesleek_entry_walkway_pavers_11733086c1f/307021-greekvilla_blackjack_thermory_modernwindows_dutchdoor_awning_avantesleek_entry_walkway_pavers_11733086c1f.jpg?_i=AA') center/cover no-repeat;
+            transition: transform 8s ease-in-out;
+        }
+        .door-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 400px;
+            height: 600px;
+            transform: translate(-50%, -50%);
+            transform-style: preserve-3d;
+        }
+        .door {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.decorilla.com/online-decorating/wp-content/uploads/2019/02/Therapist-office-interior-design-before-and-after-by-Decorilla-scaled.jpeg') center/cover no-repeat;
+            transform-origin: left center;
+            transition: transform 4s ease-in-out;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            backface-visibility: hidden;
+        }
+        .interior {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            background: url('https://workspacebliss.com/wp-content/uploads/2025/05/feature-article-in-post-cozy-therapy-office.webp') center/cover no-repeat;
+            opacity: 0;
+            transition: opacity 4s ease-in-out;
+        }
+        #welcome {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 4rem;
+            color: #f5e6d3;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+            letter-spacing: 0.2em;
+            white-space: nowrap;
+            opacity: 0;
+            z-index: 10;
+        }
+        .letter {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s ease;
+        }
     </style>
 </head>
 <body>
-    <div id="welcome">Welcome to Crown Counseling</div>
+    <div class="scene">
+        <div class="exterior" id="exterior"></div>
+        <div class="door-container">
+            <div class="door" id="door"></div>
+        </div>
+        <div class="interior" id="interior"></div>
+        <div id="welcome"></div>
+    </div>
+
     <script>
-        // Scene setup
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        const welcomeText = "Welcome to Crown Counseling";
+        const welcomeDiv = document.getElementById('welcome');
 
-        // Lighting for warm therapeutic feel
-        const ambientLight = new THREE.AmbientLight(0xfff3e0, 1);
-        scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xffe0b2, 1);
-        directionalLight.position.set(5, 10, 7);
-        scene.add(directionalLight);
-
-        // Fog for soft depth
-        scene.fog = new THREE.FogExp2(0xe8e1d9, 0.015);
-
-        // Exterior background (replace with your building/door approach image)
-        const exteriorTexture = new THREE.TextureLoader().load('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'); // Placeholder wooden door exterior
-        scene.background = exteriorTexture;
-
-        // Door (simple plane with texture)
-        const doorGeometry = new THREE.PlaneGeometry(4, 6);
-        const doorTexture = new THREE.TextureLoader().load('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'); // Placeholder door close-up
-        const doorMaterial = new THREE.MeshBasicMaterial({ map: doorTexture });
-        const door = new THREE.Mesh(doorGeometry, doorMaterial);
-        
-        // Pivot group for proper hinge opening
-        const pivot = new THREE.Group();
-        pivot.add(door);
-        door.position.x = 2; // Offset to rotate around left edge
-        pivot.position.z = 5;
-        scene.add(pivot);
-
-        // Interior office reveal (large plane behind door)
-        const officeTexture = new THREE.TextureLoader().load('https://images.unsplash.com/photo-1600488993108-0c0c30a8c3e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'); // Placeholder cozy office interior
-        const officeMaterial = new THREE.MeshBasicMaterial({ map: officeTexture });
-        const officePlane = new THREE.Mesh(new THREE.PlaneGeometry(20, 15), officeMaterial);
-        officePlane.position.z = -5;
-        scene.add(officePlane);
-
-        camera.position.z = 15;
-
-        // Animation timeline
-        const tl = gsap.timeline({ onComplete: () => document.getElementById('welcome').style.opacity = 0 });
-        
-        // Slow zoom toward door
-        tl.to(camera.position, { z: 6, duration: 6, ease: "power2.inOut" });
-        
-        // Open door gently
-        tl.to(pivot.rotation, { y: -Math.PI / 2, duration: 3, ease: "power2.inOut" }, "-=2");
-        
-        // Glide through into office
-        tl.to(camera.position, { z: -3, duration: 5, ease: "power1.inOut" }, "-=2");
-
-        // Render loop
-        function animate() {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        // Resize handler
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+        // Build letters
+        welcomeText.split('').forEach(char => {
+            const span = document.createElement('span');
+            span.className = 'letter';
+            span.textContent = char === ' ' ? '\u00A0' : char;
+            welcomeDiv.appendChild(span);
         });
+
+        // Speech Synthesis (browser built-in voice)
+        function speakWelcome() {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(welcomeText);
+                utterance.rate = 0.9;
+                utterance.pitch = 1.1;
+                utterance.volume = 0.8;
+
+                // Try to select a pleasant female voice
+                const voices = speechSynthesis.getVoices();
+                const femaleVoice = voices.find(v => v.name.includes('Google') || v.name.includes('Female') || v.lang.startsWith('en'));
+                if (femaleVoice) utterance.voice = femaleVoice;
+
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Animation sequence
+        setTimeout(() => {
+            // Fade in and animate letters one by one
+            document.querySelectorAll('.letter').forEach((letter, i) => {
+                setTimeout(() => {
+                    letter.style.opacity = 1;
+                    letter.style.transform = 'translateY(0)';
+                }, i * 100);
+            });
+
+            speakWelcome(); // Speak as letters appear
+        }, 1000);
+
+        setTimeout(() => {
+            document.getElementById('exterior').style.transform = 'scale(1.8)'; // Zoom in
+        }, 3000);
+
+        setTimeout(() => {
+            document.getElementById('door').style.transform = 'rotateY(-110deg)'; // Door opens
+        }, 7000);
+
+        setTimeout(() => {
+            document.getElementById('interior').style.opacity = 1; // Reveal office
+            welcomeDiv.style.opacity = 0.7;
+        }, 10000);
     </script>
 </body>
 </html>
