@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crown Counseling</title>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+        #welcome { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 3rem; text-shadow: 2px 2px 10px black; z-index: 10; pointer-events: none; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <div id="welcome">Welcome to Crown Counseling</div>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Lighting for warm therapeutic feel
+        const ambientLight = new THREE.AmbientLight(0xfff3e0, 1);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffe0b2, 1);
+        directionalLight.position.set(5, 10, 7);
+        scene.add(directionalLight);
+
+        // Fog for soft depth
+        scene.fog = new THREE.FogExp2(0xe8e1d9, 0.015);
+
+        // Exterior background (replace with your building/door approach image)
+        const exteriorTexture = new THREE.TextureLoader().load('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'); // Placeholder wooden door exterior
+        scene.background = exteriorTexture;
+
+        // Door (simple plane with texture)
+        const doorGeometry = new THREE.PlaneGeometry(4, 6);
+        const doorTexture = new THREE.TextureLoader().load('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'); // Placeholder door close-up
+        const doorMaterial = new THREE.MeshBasicMaterial({ map: doorTexture });
+        const door = new THREE.Mesh(doorGeometry, doorMaterial);
+        
+        // Pivot group for proper hinge opening
+        const pivot = new THREE.Group();
+        pivot.add(door);
+        door.position.x = 2; // Offset to rotate around left edge
+        pivot.position.z = 5;
+        scene.add(pivot);
+
+        // Interior office reveal (large plane behind door)
+        const officeTexture = new THREE.TextureLoader().load('https://images.unsplash.com/photo-1600488993108-0c0c30a8c3e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'); // Placeholder cozy office interior
+        const officeMaterial = new THREE.MeshBasicMaterial({ map: officeTexture });
+        const officePlane = new THREE.Mesh(new THREE.PlaneGeometry(20, 15), officeMaterial);
+        officePlane.position.z = -5;
+        scene.add(officePlane);
+
+        camera.position.z = 15;
+
+        // Animation timeline
+        const tl = gsap.timeline({ onComplete: () => document.getElementById('welcome').style.opacity = 0 });
+        
+        // Slow zoom toward door
+        tl.to(camera.position, { z: 6, duration: 6, ease: "power2.inOut" });
+        
+        // Open door gently
+        tl.to(pivot.rotation, { y: -Math.PI / 2, duration: 3, ease: "power2.inOut" }, "-=2");
+        
+        // Glide through into office
+        tl.to(camera.position, { z: -3, duration: 5, ease: "power1.inOut" }, "-=2");
+
+        // Render loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
