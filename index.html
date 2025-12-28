@@ -1,138 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crown Counseling</title>
+    <meta charset="utf-8">
+    <title>Welcome to Crown Counseling - 3D Experience</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Georgia', serif; }
-        .scene {
-            perspective: 1000px;
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-            overflow: hidden;
-            background: #000;
-        }
-        .exterior {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: url('https://res.cloudinary.com/brickandbatten/images/w_2560,h_1569,c_scale/f_auto,q_auto/v1741419383/wordpress_assets/307021-greekvilla_blackjack_thermory_modernwindows_dutchdoor_awning_avantesleek_entry_walkway_pavers_11733086c1f/307021-greekvilla_blackjack_thermory_modernwindows_dutchdoor_awning_avantesleek_entry_walkway_pavers_11733086c1f.jpg?_i=AA') center/cover no-repeat;
-            transition: transform 8s ease-in-out;
-        }
-        .door-container {
+        body { margin: 0; overflow: hidden; background: #000; }
+        #info {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 400px;
-            height: 600px;
             transform: translate(-50%, -50%);
-            transform-style: preserve-3d;
-        }
-        .door {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: url('https://www.decorilla.com/online-decorating/wp-content/uploads/2019/02/Therapist-office-interior-design-before-and-after-by-Decorilla-scaled.jpeg') center/cover no-repeat;
-            transform-origin: left center;
-            transition: transform 4s ease-in-out;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
-            backface-visibility: hidden;
-        }
-        .interior {
-            position: absolute;
-            width: 100vw;
-            height: 100vh;
-            background: url('https://workspacebliss.com/wp-content/uploads/2025/05/feature-article-in-post-cozy-therapy-office.webp') center/cover no-repeat;
-            opacity: 0;
-            transition: opacity 4s ease-in-out;
-        }
-        #welcome {
-            position: absolute;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 4rem;
-            color: #f5e6d3;
-            text-shadow: 0 0 20px rgba(255,255,255,0.5);
-            letter-spacing: 0.2em;
-            white-space: nowrap;
-            opacity: 0;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 40px;
+            text-align: center;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+            pointer-events: none;
             z-index: 10;
         }
-        .letter {
-            display: inline-block;
+        #info2 {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+            pointer-events: none;
+            z-index: 10;
             opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.6s ease;
+        }
+        #crown {
+            width: 100px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="scene">
-        <div class="exterior" id="exterior"></div>
-        <div class="door-container">
-            <div class="door" id="door"></div>
-        </div>
-        <div class="interior" id="interior"></div>
-        <div id="welcome"></div>
+    <div id="info">
+        <img id="crown" src="https://media.istockphoto.com/id/1600489951/vector/golden-crown-icon-design-simple-crown-symbol-vector-design-and-illustration.jpg?s=612x612&w=0&k=20&c=jSzeSGv3gnE1bRkKLKnJhPgSpK9V9KsIipcBoi9C_z8=" alt="Crown">
+        <div>Welcome to<br>Crown Counseling</div>
+    </div>
+    <div id="info2">
+        Welcome to Crown Counseling<br><br>
+        <strong>Book your appointment<br>to come to our office</strong>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/three@0.167.1/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.167.1/examples/js/controls/OrbitControls.js"></script>
+
     <script>
-        const welcomeText = "Welcome to Crown Counseling";
-        const welcomeDiv = document.getElementById('welcome');
+        let camera, scene, renderer, controls;
+        let currentPanorama = 'exterior';
 
-        // Build letters
-        welcomeText.split('').forEach(char => {
-            const span = document.createElement('span');
-            span.className = 'letter';
-            span.textContent = char === ' ' ? '\u00A0' : char;
-            welcomeDiv.appendChild(span);
-        });
+        init();
+        animate();
 
-        // Speech Synthesis (browser built-in voice)
-        function speakWelcome() {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(welcomeText);
-                utterance.rate = 0.9;
-                utterance.pitch = 1.1;
-                utterance.volume = 0.8;
+        function init() {
+            // Scene
+            scene = new THREE.Scene();
 
-                // Try to select a pleasant female voice
-                const voices = speechSynthesis.getVoices();
-                const femaleVoice = voices.find(v => v.name.includes('Google') || v.name.includes('Female') || v.lang.startsWith('en'));
-                if (femaleVoice) utterance.voice = femaleVoice;
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-                speechSynthesis.speak(utterance);
-            }
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // Controls (look around)
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableZoom = false; // We'll control zoom manually
+            controls.enablePan = false;
+            controls.rotateSpeed = 0.3;
+
+            // Load first panorama (therapy house exterior)
+            loadPanorama('https://www.marthastewart.com/thmb/P5AZB0U8F35_-oP5E4WtGxS7iY0=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/sage_front-door_Kate-Marker-Interiors-a68eff5572b7422caca0c87aa833db74.jpg');
+
+            // Window resize
+            window.addEventListener('resize', onWindowResize);
         }
 
-        // Animation sequence
-        setTimeout(() => {
-            // Fade in and animate letters one by one
-            document.querySelectorAll('.letter').forEach((letter, i) => {
-                setTimeout(() => {
-                    letter.style.opacity = 1;
-                    letter.style.transform = 'translateY(0)';
-                }, i * 100);
+        function loadPanorama(url) {
+            const loader = new THREE.TextureLoader();
+            loader.load(url, function (texture) {
+                texture.mapping = THREE.EquirectangularReflectionMapping;
+                texture.encoding = THREE.sRGBEncoding;
+
+                // Create sphere
+                const geometry = new THREE.SphereGeometry(500, 60, 40);
+                geometry.scale(-1, 1, 1); // Invert to view from inside
+
+                const material = new THREE.MeshBasicMaterial({ map: texture });
+
+                const mesh = new THREE.Mesh(geometry, material);
+                scene.add(mesh);
+
+                // If transitioning, remove old sphere
+                if (scene.children.length > 1) {
+                    scene.remove(scene.children[0]);
+                }
+
+                // Reset camera FOV for zoom effect
+                camera.fov = 75;
+                camera.updateProjectionMatrix();
+
+                // Start auto-zoom if exterior
+                if (currentPanorama === 'exterior') {
+                    startAutoZoom();
+                }
             });
+        }
 
-            speakWelcome(); // Speak as letters appear
-        }, 1000);
+        function startAutoZoom() {
+            let zoomLevel = 0;
+            const zoomInterval = setInterval(() => {
+                zoomLevel += 0.8;
+                camera.fov = Math.max(75 - zoomLevel, 20);
 
-        setTimeout(() => {
-            document.getElementById('exterior').style.transform = 'scale(1.8)'; // Zoom in
-        }, 3000);
+                camera.updateProjectionMatrix();
 
-        setTimeout(() => {
-            document.getElementById('door').style.transform = 'rotateY(-110deg)'; // Door opens
-        }, 7000);
+                // When zoomed enough, transition to office
+                if (camera.fov <= 30) {
+                    clearInterval(zoomInterval);
+                    transitionToOffice();
+                }
+            }, 50);
+        }
 
-        setTimeout(() => {
-            document.getElementById('interior').style.opacity = 1; // Reveal office
-            welcomeDiv.style.opacity = 0.7;
-        }, 10000);
+        function transitionToOffice() {
+            currentPanorama = 'office';
+
+            // Fade out welcome text
+            document.getElementById('info').style.opacity = 0;
+
+            // Fade in office text
+            setTimeout(() => {
+                document.getElementById('info2').style.opacity = 1;
+            }, 1000);
+
+            // Load office panorama
+            loadPanorama('https://cdn.autonomous.ai/production/ecm/230720/Creating-a-Calming-and-Welcoming-Therapy-Office-Decor5-73425dce-842f-41fb-b4c2-56a852935d0f.webp');
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
     </script>
 </body>
 </html>
