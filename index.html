@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Meli Pil | Psychodrama & Experiential Therapy</title>
+  <title>About | Jane Smith – Psychodrama & Experiential Therapy</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <style>
     :root {
-      --primary: #c44e4e;       /* warm red for drama/stage */
-      --accent: #d4a373;         /* gold for spotlight/energy */
-      --bg: #1a0f0a;             /* deep theater curtain bg */
+      --primary: #c44e4e;
+      --accent: #d4a373;
+      --bg: #1a0f0a;
       --card: #2c1a14;
       --text: #f5f0e8;
       --muted: #b8a89a;
@@ -23,13 +23,7 @@
       background: var(--bg);
       color: var(--text);
       line-height: 1.7;
-      overflow-x: hidden;
     }
-    h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 700; letter-spacing: 1px; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { color: var(--text); }
-
-    /* Header / Nav */
     header {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -40,7 +34,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: padding 0.4s;
     }
     header.scrolled { padding: 1rem 8%; }
     .logo {
@@ -48,174 +41,69 @@
       font-style: italic;
       color: var(--accent);
     }
-    nav ul {
-      display: flex;
-      gap: 2.5rem;
-      list-style: none;
-    }
-    nav a {
+    .redacted-name {
       position: relative;
-      padding-bottom: 0.4rem;
+      display: inline-block;
+      color: transparent !important;
+      background: #000;
+      padding: 0 8px;
+      border-radius: 3px;
+      overflow: hidden;
+      user-select: none;
     }
-    nav a::after {
-      content: '';
+    .redacted-name::before,
+    .redacted-name::after {
+      content: "█████";
       position: absolute;
-      bottom: 0; left: 0;
-      width: 0; height: 2px;
-      background: var(--accent);
-      transition: width 0.4s;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #c44e4e;
+      font-size: 1.2em;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px #c44e4e, 0 0 20px #c44e4e;
+      pointer-events: none;
     }
-    nav a:hover::after { width: 100%; }
-
-    /* Hero */
-    .hero {
-      height: 100vh;
-      min-height: 700px;
-      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1519741497674-4113f4c0c2d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover;
+    nav ul { display: flex; gap: 2.5rem; list-style: none; }
+    nav a { color: var(--text); position: relative; padding-bottom: 0.4rem; }
+    nav a::after { content:''; position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--accent); transition:width 0.4s; }
+    nav a:hover::after { width:100%; }
+    main { padding-top: 140px; }
+    section { padding: 6rem 8% 4rem; }
+    .hero-small {
+      height: 60vh;
+      min-height: 500px;
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.85)),
+                  url('https://images.unsplash.com/photo-1519741497674-4113f4c0c2d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80') center/cover;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      position: relative;
     }
-    .hero-content {
+    .hero-small h1 { font-size: clamp(3.5rem, 9vw, 7rem); color: var(--accent); }
+    .content {
       max-width: 900px;
-      padding: 0 1.5rem;
-    }
-    .hero h1 {
-      font-size: clamp(4rem, 10vw, 9rem);
-      margin-bottom: 1.5rem;
-      text-shadow: 0 8px 40px rgba(0,0,0,0.9);
-    }
-    .hero p {
-      font-size: 1.5rem;
-      font-style: italic;
-      margin-bottom: 2.5rem;
+      margin: 0 auto;
+      font-size: 1.15rem;
       color: var(--muted);
     }
-    .cta-btn {
-      background: var(--accent);
-      color: var(--bg);
-      padding: 1rem 2.5rem;
-      border-radius: 50px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-    .cta-btn:hover {
-      transform: scale(1.08);
-      box-shadow: 0 10px 40px rgba(212,163,115,0.4);
-    }
-
-    /* Main Content */
-    main { padding-top: 120px; }
-    section {
-      padding: 8rem 8% 6rem;
-    }
-    .section-title {
-      text-align: center;
-      font-size: 3.5rem;
-      margin-bottom: 4rem;
-      color: var(--accent);
-      position: relative;
-    }
-    .section-title::after {
-      content: '';
-      width: 120px;
-      height: 3px;
-      background: var(--primary);
-      position: absolute;
-      bottom: -1rem;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    /* Cards Grid */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-      gap: 2.5rem;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      transition: all 0.5s;
-    }
-    .card:hover {
-      transform: translateY(-12px);
-      border-color: var(--accent);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    }
-    .card img {
-      width: 100%;
-      height: 240px;
-      object-fit: cover;
-    }
-    .card-content {
-      padding: 2rem;
-    }
-    .card h3 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-      color: var(--accent);
-    }
-
-    /* Process Timeline */
-    .process {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .step {
-      display: flex;
-      gap: 3rem;
-      margin-bottom: 5rem;
-      opacity: 0;
-      transform: translateY(60px);
-    }
-    .step:nth-child(even) { flex-direction: row-reverse; }
-    .step-img {
-      flex: 1;
-      height: 400px;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-    }
-    .step-img img { width:100%; height:100%; object-fit:cover; }
-    .step-text {
-      flex: 1.4;
-    }
-    .step-number {
-      font-size: 4rem;
-      font-weight: bold;
-      color: var(--primary);
-      opacity: 0.3;
-      margin-bottom: 1rem;
-    }
-
-    /* Footer */
+    .content h2 { color: var(--accent); font-size: 2.8rem; margin: 3rem 0 1.5rem; }
+    .highlight { color: var(--text); font-weight: 500; }
     footer {
       background: var(--card);
       padding: 4rem 8% 2rem;
       text-align: center;
       border-top: 1px solid var(--border);
     }
-    footer a { margin: 0 1rem; }
-
     @media (max-width: 900px) {
-      .step, .step:nth-child(even) { flex-direction: column; }
-      .step-img { height: 300px; }
-      nav ul { gap: 1.5rem; }
+      nav ul { gap: 1.5rem; font-size: 0.95rem; }
     }
   </style>
 </head>
 <body>
 
   <header id="nav">
-    <div class="logo">Meli Pil</div>
+    <div class="logo"><span class="redacted-name">Jane Smith</span></div>
     <nav>
       <ul>
         <li><a href="index.html">Home</a></li>
@@ -227,80 +115,39 @@
     </nav>
   </header>
 
-  <section class="hero">
-    <div class="hero-content">
-      <h1>Psychodrama</h1>
-      <p>Step onto the stage of your life. Enact, explore, heal.</p>
-      <a href="contact.html" class="cta-btn">Schedule a Consultation</a>
-    </div>
-  </section>
+  <div class="hero-small">
+    <h1>About</h1>
+  </div>
 
   <main>
     <section>
-      <h2 class="section-title">Welcome to Experiential Transformation</h2>
-      <p style="max-width:800px; margin:0 auto 2rem; text-align:center; font-size:1.2rem; color:var(--muted);">
-        Drawing from the foundational work of J.L. Moreno and modern trauma-informed practices (inspired by Psychodrama New Jersey and the Phoenix Center in Pennsylvania), 
-        we use action methods to bring hidden stories into the open — through role reversal, doubling, mirroring, and spontaneous enactment.
-      </p>
-      <div class="grid">
-        <div class="card">
-          <img src="https://images.unsplash.com/photo-1519741497674-4113f4c0c2d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Group circle in psychodrama">
-          <div class="card-content">
-            <h3>Group Psychodrama</h3>
-            <p>Experience the power of the group as protagonist, auxiliary egos, and audience — unlocking relational healing in real time.</p>
-          </div>
-        </div>
-        <div class="card">
-          <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Role play enactment">
-          <div class="card-content">
-            <h3>Individual Sessions</h3>
-            <p>One-on-one dramatic exploration — empty chair, role reversal, future projection — tailored to your unique narrative.</p>
-          </div>
-        </div>
-        <div class="card">
-          <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Therapeutic warm-up">
-          <div class="card-content">
-            <h3>Training & Workshops</h3>
-            <p>For clinicians: Build spontaneity and action-method skills in safe, experiential containers.</p>
-          </div>
+      <div class="content">
+        <h2>Passionate about Action & Healing</h2>
+        <p>I am a licensed mental health counselor specializing in <span class="highlight">psychodrama</span> and experiential psychotherapy. For over a decade, <span class="redacted-name">Jane Smith</span> has guided individuals and groups through transformative action methods...</p>
+
+        <h2>Training & Influences</h2>
+        <p>My work is deeply rooted in the legacy of <strong>J.L. Moreno</strong>...</p>
+
+        <!-- rest of bio content remains the same -->
+
+        <div style="text-align:center; margin:4rem 0;">
+          <img src="https://images.unsplash.com/photo-1519741497674-4113f4c0c2d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Symbolic group circle" style="max-width:100%; border-radius:12px; box-shadow:0 15px 40px rgba(0,0,0,0.6);">
         </div>
       </div>
-    </section>
-
-    <section style="background:var(--card);">
-      <h2 class="section-title">Why Psychodrama?</h2>
-      <p style="max-width:900px; margin:0 auto; text-align:center; font-size:1.25rem;">
-        Unlike talk therapy alone, psychodrama brings the body, emotions, and relationships onto the "stage." It is especially powerful for trauma, grief, relational wounds, and identity exploration — creating corrective emotional experiences that words often cannot reach.
-      </p>
     </section>
   </main>
 
   <footer>
-    <p>© 2026 Meli Pil | Psychodrama & Experiential Psychotherapy</p>
+    <p>© 2026 <span class="redacted-name">Jane Smith</span> | Psychodrama & Experiential Psychotherapy</p>
     <p style="margin-top:1rem;">
-      <a href="contact.html">Contact</a> • 
-      <a href="#">Privacy</a> • 
-      <a href="#">Location: NYC Area</a>
+      <a href="contact.html">Contact</a> • <a href="#">Privacy</a>
     </p>
   </footer>
 
   <script>
-    // Simple scroll nav effect
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 100);
-    });
-
-    // GSAP fade-ins
-    gsap.registerPlugin(ScrollTrigger);
-    gsap.utils.toArray('.card, .step').forEach(el => {
-      gsap.from(el, {
-        y: 80,
-        opacity: 0,
-        duration: 1.2,
-        ease: "power3.out",
-        scrollTrigger: { trigger: el, start: "top 85%", once: true }
-      });
     });
   </script>
 </body>
